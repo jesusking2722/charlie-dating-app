@@ -1,0 +1,14 @@
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema(
+  {
+    googleId: { type: String, unique: true, sparse: true },
+    email: { type: String, required: true, unique: true },
+    name: { type: String },
+    password: { type: String },
+    profilePic: [{ type: String }],
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("User", userSchema);
