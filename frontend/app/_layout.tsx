@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="profile" />
         {/* Render Not Found Screen */}
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </UserProvider>
   );

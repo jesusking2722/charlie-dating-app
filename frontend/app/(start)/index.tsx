@@ -45,7 +45,8 @@ export default function Start() {
             updateUser(response.data);
             if (response.data.verified) {
             } else {
-              router.push("/verify/kyc");
+              // router.push("/verify/kyc");
+              router.push("/profile/create/question/main");
             }
           }
         }

@@ -4,8 +4,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Progress from "react-native-progress";
 
 interface ButtonProps {
-  type: "default" | "outline" | "text";
-  label: string;
+  type: "default" | "outline" | "text" | "icon";
+  label?: string;
   icon?: keyof typeof FontAwesome.glyphMap;
   iconPosition?: "left" | "right";
   disabled?: boolean;
@@ -23,6 +23,23 @@ export default function Button({
   onClick,
 }: ButtonProps) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  if (type === "icon") {
+    return (
+      <Pressable
+        className="p-2"
+        onTouchStart={() => setIsFocused(true)}
+        onTouchEnd={() => setIsFocused(false)}
+        onPress={onClick}
+      >
+        <FontAwesome
+          name={icon}
+          color={isFocused ? "#EA4C7C" : "black"}
+          size={20}
+        />
+      </Pressable>
+    );
+  }
 
   return (
     <>

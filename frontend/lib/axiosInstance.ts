@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const axiosInstance = axios.create({
   baseURL:
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://192.168.0.2:5000/api",
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://192.168.0.2:5001/api",
   headers: {
     "Content-Type": "application/json",
   },
