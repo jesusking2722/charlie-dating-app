@@ -7,6 +7,26 @@ const userSchema = new mongoose.Schema(
     name: { type: String },
     password: { type: String },
     profilePic: [{ type: String }],
+    kyc: {
+      sessionId: { type: String },
+      sessionNumber: { type: Number },
+      sessionToken: { type: String },
+      vendorData: { type: String },
+      status: {
+        type: String,
+        enum: [
+          "Not Started",
+          "In Progress",
+          "Completed",
+          "Approved",
+          "Declined",
+          "Expired",
+          "Abandoned",
+        ],
+      },
+      url: { type: String },
+    },
+    verified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -26,7 +26,7 @@ export default function Calendar({
           ExpoCalendar.EntityTypes.EVENT
         );
         console.log("Here are all your calendars:");
-        console.log({ calendars });
+        // console.log({ calendars });
       }
     })();
   }, []);

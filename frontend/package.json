@@ -18,6 +18,7 @@
     "@expo-google-fonts/montserrat": "^0.2.3",
     "@expo/vector-icons": "^14.0.2",
     "@motionone/dom": "^10.18.0",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "autoprefixer": "^10.4.20",
@@ -25,6 +26,7 @@
     "expo": "~52.0.31",
     "expo-auth-session": "~6.0.3",
     "expo-blur": "~14.0.3",
+    "expo-calendar": "~14.0.6",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
@@ -44,6 +46,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.7",
+    "react-native-inappbrowser-reborn": "^3.7.0",
     "react-native-progress": "^5.0.1",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-svg": "15.8.0",
@@ -52,9 +55,7 @@
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
     "tailwind-merge": "^3.0.1",
-    "undefined": "expo-auth-session/providers/google",
-    "@react-native-async-storage/async-storage": "1.23.1",
-    "expo-calendar": "~14.0.6"
+    "undefined": "expo-auth-session/providers/google"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

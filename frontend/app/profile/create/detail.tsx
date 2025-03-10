@@ -10,7 +10,6 @@ import { useRouter } from "expo-router";
 import Calendar from "@/components/common/Calendar";
 
 export default function Detail() {
-  const [visible, setVisible] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const router = useRouter();
@@ -20,7 +19,9 @@ export default function Detail() {
   const buttonSize = width * 0.4; // 40% of screen width
   const iconSize = buttonSize * 0.5; // Icon is 50% of button size
 
-  const handleOnClick = async () => {};
+  const handleOnClick = async () => {
+    router.push("/verify/kyc");
+  };
 
   return (
     <ScreenTransition animationKey={0} direction="enter">

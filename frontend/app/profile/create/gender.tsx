@@ -6,7 +6,7 @@ import FooterContainer from "@/components/containers/FooterContainer";
 import Button from "@/components/common/Button";
 import { useState } from "react";
 import ScreenTransition from "@/components/animation/ScreenTransition";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function Gender() {
   const [gender, setGender] = useState<Gender | null>(null);

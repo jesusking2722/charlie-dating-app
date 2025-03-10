@@ -10,6 +10,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import UserProvider from "@/components/providers/UserProvider";
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -32,15 +33,17 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* Render Start Screens */}
-      <Stack.Screen name="(start)" />
-      {/* Render Auth Screens */}
-      <Stack.Screen name="auth" />
-      {/* Render Profile Screens */}
-      <Stack.Screen name="profile" />
-      {/* Render Not Found Screen */}
-      <Stack.Screen name="+not-found" />
-    </Stack>
+    <UserProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* Render Start Screens */}
+        <Stack.Screen name="(start)" />
+        {/* Render Auth Screens */}
+        <Stack.Screen name="auth" />
+        {/* Render Profile Screens */}
+        <Stack.Screen name="profile" />
+        {/* Render Not Found Screen */}
+        <Stack.Screen name="+not-found" />
+      </Stack>
+    </UserProvider>
   );
 }

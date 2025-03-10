@@ -56,19 +56,19 @@ export default function Signin() {
   }
 
   const handleSigninWithEmailClick = async () => {
-    router.push("/profile/create/gender");
-    // try {
-    //   const response = await signinWithEmail({ email, password });
-    //   Alert.alert(response.message);
-    //   if (response.success) {
-    //     const { user, token } = response.data;
-    //     await setAuthToken(token);
-    //     Alert.alert("Login successfully");
-    //   }
-    // } catch (error) {
-    //   console.log("Handle sign in with email error: ", error);
-    //   throw error;
-    // }
+    try {
+      const response = await signinWithEmail({ email, password });
+      Alert.alert(response.message);
+      if (response.success) {
+        const { user, token } = response.data;
+        await setAuthToken(token);
+        Alert.alert("Login successfully");
+        router.push("/verify/kyc");
+      }
+    } catch (error) {
+      console.log("Handle sign in with email error: ", error);
+      throw error;
+    }
   };
 
   const handleSigninWithGoogleClick = async () => {

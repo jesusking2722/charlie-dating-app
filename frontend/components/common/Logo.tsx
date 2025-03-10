@@ -1,8 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import InfiniteScalingView from "../animation/InfiniteScalingView";
-import { logoTexts } from "@/constants/initialValues";
-import InfiniteTransitionView from "../animation/InfiniteTransitionView";
 
 const LogoImage = require("@/assets/images/logo.png");
 

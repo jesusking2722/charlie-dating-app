@@ -1,20 +1,35 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
+const bodyParser = require("body-parser");
+const passport = require("passport");
+const passportConfig = require("./config/passport"); // Ensure this points to your passport config file
 const authRoutes = require("./routes/authRoutes");
-
-dotenv.config();
+const kycRoutes = require("./routes/kycRoutes");
+const userRoutes = require("./routes/userRoutes");
+require("dotenv").config();
 connectDB();
 
 const app = express();
+
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-app.use(cookieParser());
+app.use(cors());
+app.use(bodyParser.json());
+app.use(passport.initialize());
+require("./config/passport")(passport);
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use(
+  "/api/kyc",
+  passport.authenticate("jwt", { session: false }),
+  kycRoutes
+);
+app.use(
+  "/api/user",
+  passport.authenticate("jwt", { session: false }),
+  userRoutes
+);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

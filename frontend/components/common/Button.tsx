@@ -10,7 +10,7 @@ interface ButtonProps {
   iconPosition?: "left" | "right";
   disabled?: boolean;
   loading?: boolean;
-  onClick: (() => Promise<void>) | (() => void);
+  onClick?: (() => Promise<void>) | (() => void);
 }
 
 export default function Button({

@@ -15,7 +15,7 @@ const emailRegister = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     user = await User.create({ email, password: hashedPassword });
-    const token = generateToken(user._id);
+
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
@@ -35,13 +35,14 @@ const emailLogin = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
     // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+    const payload = { id: user._id };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "3d",
     });
 
-    res.status(200).json({
+    res.json({
       message: "Login successful",
-      data: { user, token },
+      data: { user, token: `Bearer ${token}` },
       success: true,
     });
   } catch (error) {

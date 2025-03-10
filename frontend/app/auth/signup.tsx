@@ -8,7 +8,6 @@ import InputField from "@/components/common/InputField";
 import Button from "@/components/common/Button";
 import ScreenTransition from "@/components/animation/ScreenTransition";
 import { signupWithEmail } from "@/lib/scripts/auth";
-import { setAuthToken } from "@/lib/axiosInstance";
 
 export default function Signup() {
   const [email, setEmail] = useState<string>("");

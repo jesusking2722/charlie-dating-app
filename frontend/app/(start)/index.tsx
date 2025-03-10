@@ -10,12 +10,18 @@ import ScreenTransition from "@/components/animation/ScreenTransition";
 import { getRandomNumber } from "@/helper";
 import { logoTexts } from "@/constants/initialValues";
 import ThreeDotsLoader from "@/components/animation/ThreeDotsLoader";
+import { useAuth } from "@/hooks/useAuth";
+import { fetchUserInfo } from "@/lib/scripts/user";
+import { useUser } from "@/components/providers/UserProvider";
 
 const HeartImage = require("@/assets/images/heart.png");
 
 export default function Start() {
   const [progress, setProgress] = useState(0);
   const [randomText, setRandomText] = useState("");
+
+  const { checkAuthentication } = useAuth();
+  const { updateUser } = useUser();
 
   useEffect(() => {
     setRandomText(logoTexts[getRandomNumber()]);
@@ -25,12 +31,24 @@ export default function Start() {
 
   useEffect(() => {
     let startTime = Date.now();
-    let interval = setInterval(() => {
+    let interval = setInterval(async () => {
       let elapsed = (Date.now() - startTime) / 5000;
       setProgress(elapsed >= 1 ? 1 : elapsed);
       if (elapsed >= 1) {
         clearInterval(interval);
-        router.push("/auth/signup");
+        const result = await checkAuthentication();
+        if (!result) {
+          router.push("/auth/signin");
+        } else {
+          const response = await fetchUserInfo();
+          if (response.success) {
+            updateUser(response.data);
+            if (response.data.verified) {
+            } else {
+              router.push("/verify/kyc");
+            }
+          }
+        }
       }
     }, 50);
 
