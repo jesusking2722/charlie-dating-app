@@ -1,9 +1,12 @@
 import { Tabs } from "expo-router";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Button from "@/components/common/Button";
-import { View, TouchableWithoutFeedback, Keyboard } from "react-native"; // Add TouchableWithoutFeedback
+import { View, TouchableWithoutFeedback, Keyboard, Text } from "react-native"; // Add TouchableWithoutFeedback
 import { useState } from "react";
 import Navbar from "@/components/layouts/Navbar"; // Ensure Navbar component is correctly imported
+import { Image } from "expo-image";
+
+const Logo = require("@/assets/images/logo.png");
 
 export default function TabLayout() {
   const [visible, setVisible] = useState<boolean>(false);
@@ -14,8 +17,12 @@ export default function TabLayout() {
   };
 
   const CustomHeader = () => (
-    <View className="w-full flex flex-row">
+    <View className="w-full flex flex-row items-center px-4 bg-white">
       <Button type="icon" icon="bars" onClick={() => setVisible(true)} />
+      <View className="flex-1 flex-row justify-center items-center gap-4">
+        <Image source={Logo} alt="LOGO" style={{ width: 70, height: 70 }} />
+        <Text className="font-semibold text-black">CHARLIE UNICORN AI</Text>
+      </View>
     </View>
   );
 

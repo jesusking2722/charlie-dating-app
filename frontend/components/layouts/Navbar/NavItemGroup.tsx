@@ -38,9 +38,7 @@ export default function NavItemGroup({
           }}
         >
           <FontAwesome name={item.icon} color="white" size={12} />
-          <Text className="text-white font-sans font-semibold text-sm">
-            {item.label}
-          </Text>
+          <Text className="text-white font-sans font-bold">{item.label}</Text>
         </Pressable>
       ))}
     </View>

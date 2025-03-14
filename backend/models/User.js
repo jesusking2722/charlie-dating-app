@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     name: { type: String },
     password: { type: String },
-    profilePic: [{ type: String }],
+    profilePics: [{ type: String }],
+    gender: { type: String, enum: ["male", "female"] },
     kyc: {
       sessionId: { type: String },
       sessionNumber: { type: Number },

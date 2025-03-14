@@ -1,5 +1,10 @@
 import axiosInstance from "../axiosInstance";
-import { SIGNIN_WITH_EMAIL, SIGNUP_WITH_EMAIL } from "../apis";
+import {
+  FETCH_ME,
+  SIGNIN_WITH_EMAIL,
+  SIGNUP_WITH_EMAIL,
+  UPDATE_ME,
+} from "../apis";
 import { User, ApiResponse, AuthResponse } from "@/types";
 
 export const signupWithEmail = async (
@@ -24,4 +29,15 @@ export const signinWithEmail = async (
     console.log("Failed to sign in with email: ", error);
     throw error;
   }
+};
+
+export const fetchMe = async (id: string): Promise<ApiResponse<User>> => {
+  console.log("my id: ", FETCH_ME + id);
+  const response = await axiosInstance.get(FETCH_ME + id);
+  return response.data;
+};
+
+export const updateMe = async (user: User): Promise<ApiResponse<User>> => {
+  const response = await axiosInstance.patch(UPDATE_ME, user);
+  return response.data;
 };

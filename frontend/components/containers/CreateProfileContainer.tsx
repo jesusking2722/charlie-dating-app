@@ -12,14 +12,14 @@ export default function CreateProfileContainer({
   subtitle,
 }: CreateProfileContainerProps) {
   return (
-    <View className="w-full min-h-screen p-8 relative flex flex-col items-center justify-center overflow-hidden bg-white">
-      <View className="w-full text-left absolute top-10 left-10">
+    <View className="flex-1 bg-white">
+      <View className="w-full text-left p-4">
         <Text className="font-sans text-lg font-semibold text-black">
           {title}
         </Text>
         <Text className="font-sans text-sm text-gray-400 mt-1">{subtitle}</Text>
       </View>
-      {children}
+      <View className="flex-1 justify-center items-center">{children}</View>
     </View>
   );
 }

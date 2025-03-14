@@ -28,6 +28,8 @@ export default function AvatarGroup({
           style={{
             width: size,
             height: size,
+            borderRadius: size / 2, // Ensure circular shape
+            overflow: "hidden", // Clip image to circle
             marginLeft: index === 0 ? 0 : spacing,
           }}
         />
@@ -39,6 +41,7 @@ export default function AvatarGroup({
           style={{
             width: size,
             height: size,
+            borderRadius: size / 2,
             marginLeft: spacing,
           }}
         >

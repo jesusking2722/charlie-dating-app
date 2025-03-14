@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, Alert } from "react-native";
 import Container from "@/components/containers/Container";
 import Logo from "@/components/common/Logo";
 import FooterContainer from "@/components/containers/FooterContainer";
@@ -12,6 +12,7 @@ import * as WebBrowser from "expo-web-browser";
 import { makeRedirectUri } from "expo-auth-session";
 import { signinWithEmail } from "@/lib/scripts/auth";
 import { setAuthToken } from "@/lib/axiosInstance";
+import { useUser } from "@/components/providers/UserProvider";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,39 +22,41 @@ export default function Signin() {
   const [userInfo, setUserInfo] = useState<any>(null);
   const router = useRouter();
 
+  const { updateUser } = useUser();
+
   // Google OAuth Request
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-    iosClientId: "YOUR_IOS_CLIENT_ID.apps.googleusercontent.com",
-    androidClientId: "YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com",
-    redirectUri: makeRedirectUri({
-      native: "yourapp://redirect",
-    }),
-  });
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   clientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+  //   iosClientId: "YOUR_IOS_CLIENT_ID.apps.googleusercontent.com",
+  //   androidClientId: "YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com",
+  //   redirectUri: makeRedirectUri({
+  //     native: "yourapp://redirect",
+  //   }),
+  // });
 
-  // Handle Google sign-in response
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { authentication } = response;
-      fetchUserInfo(authentication?.accessToken);
-    }
-  }, [response]);
+  // // Handle Google sign-in response
+  // useEffect(() => {
+  //   if (response?.type === "success") {
+  //     const { authentication } = response;
+  //     fetchUserInfo(authentication?.accessToken);
+  //   }
+  // }, [response]);
 
-  // Fetch user profile data from Google API
-  async function fetchUserInfo(token: string | undefined) {
-    if (!token) return;
+  // // Fetch user profile data from Google API
+  // async function fetchUserInfo(token: string | undefined) {
+  //   if (!token) return;
 
-    try {
-      const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const user = await res.json();
-      setUserInfo(user);
-      Alert.alert("Login Successful", `Welcome ${user.name}`);
-    } catch (error) {
-      console.error("Failed to fetch user info:", error);
-    }
-  }
+  //   try {
+  //     const res = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const user = await res.json();
+  //     setUserInfo(user);
+  //     Alert.alert("Login Successful", `Welcome ${user.name}`);
+  //   } catch (error) {
+  //     console.error("Failed to fetch user info:", error);
+  //   }
+  // }
 
   const handleSigninWithEmailClick = async () => {
     try {
@@ -61,9 +64,10 @@ export default function Signin() {
       Alert.alert(response.message);
       if (response.success) {
         const { user, token } = response.data;
+        updateUser(user);
         await setAuthToken(token);
         Alert.alert("Login successfully");
-        router.push("/verify/kyc");
+        router.push("/profile/create/gender");
       }
     } catch (error) {
       console.log("Handle sign in with email error: ", error);
@@ -72,7 +76,7 @@ export default function Signin() {
   };
 
   const handleSigninWithGoogleClick = async () => {
-    await promptAsync();
+    // await promptAsync();
   };
 
   const handleForgotPasswordClick = async () => {
@@ -148,9 +152,3 @@ export default function Signin() {
     </ScreenTransition>
   );
 }
-
-const styles = StyleSheet.create({
-  textInput: {
-    height: 50,
-  },
-});

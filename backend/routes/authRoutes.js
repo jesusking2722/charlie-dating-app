@@ -3,6 +3,8 @@ const {
   emailRegister,
   emailLogin,
   googleAuth,
+  fetchMe,
+  updateMe,
 } = require("../controllers/authController");
 
 const router = express.Router();
@@ -15,5 +17,9 @@ router.post("/register/email", emailRegister);
 router.post("/login/google", googleAuth);
 // Email Sign-in
 router.post("/login/email", emailLogin);
+// Fetch me
+router.get("/me/:id", fetchMe);
+// Update me
+router.patch("/me", updateMe);
 
 module.exports = router;

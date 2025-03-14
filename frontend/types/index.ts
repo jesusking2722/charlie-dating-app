@@ -1,10 +1,16 @@
+import { ICountry } from "react-native-international-phone-number";
+
 export interface User {
   _id?: string;
   googleId?: string;
   email?: string;
   name?: string;
   password?: string;
-  profilePic?: string[];
+  birthday?: Date;
+  phone?: string;
+  country?: ICountry;
+  gender?: "male" | "female";
+  profilePics?: string[];
   kyc?: KycResponse;
   verified?: boolean;
 }
@@ -52,6 +58,10 @@ export interface KycSessionDecisionResponse {
 // Declined: The verification failed, and the user's identity could not be confirmed.
 // Expired: The session has timed out or expired.
 // Abandoned: The user did not complete the verification process.
+
+export interface UploadImageResponse {
+  imageUrls?: string[];
+}
 
 export interface ApiResponse<T> {
   success: boolean;

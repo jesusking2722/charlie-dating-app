@@ -1,5 +1,5 @@
-import { View, useWindowDimensions, Dimensions } from "react-native";
-import { useState } from "react";
+import { View, Dimensions, Alert } from "react-native";
+import { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import Avatar from "@/components/common/Avatar";
@@ -7,54 +7,124 @@ import AvatarGroup from "@/components/common/AvatarGroup";
 import Button from "@/components/common/Button";
 import ModalContainer from "@/components/containers/ModalContainer";
 import { useRouter } from "expo-router";
+import Spinner from "@/components/common/Spinner";
+import * as Filesystem from "expo-file-system";
+import { uploadImage } from "@/lib/scripts/upload";
+import { User } from "@/types";
+import { useUser } from "@/components/providers/UserProvider";
+import { updateMe } from "@/lib/scripts/auth";
 
 export default function Modal() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageGroup, setSelectedImageGroup] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [uploadLoading, setUploadLoading] = useState<boolean>(false);
+  const [avatarSize, setAvatarSize] = useState(
+    Dimensions.get("window").width > 400
+      ? 200
+      : Dimensions.get("window").width * 0.4
+  );
   const router = useRouter();
 
-  const { width } = useWindowDimensions(); // Get screen width
   const screenWidth = Dimensions.get("window").width;
 
-  const avatarSize = screenWidth > 400 ? 200 : screenWidth * 0.4; // Adjust for larger screens
   const iconSize = screenWidth > 400 ? 80 : screenWidth * 0.15; // Adjust icon size based on screen width
 
-  const handleCameraClick = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
+  const { user, updateUser } = useUser();
 
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+  const handleCameraClick = async () => {
+    setUploadLoading(true);
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Camera permissions not granted.");
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        console.log("Camera operation was canceled.");
+      } else {
+        const uri = result.assets[0].uri;
+        setSelectedImage(uri); // Set as the primary image
+        setSelectedImageGroup((prev) => [...prev, uri]); // Append to image group
+      }
+    } catch (error) {
+      console.error("Error launching camera:", error);
+    } finally {
+      setUploadLoading(false);
     }
   };
 
   const handleLibraryClick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsMultipleSelection: true,
-      selectionLimit: 4,
+    setUploadLoading(true);
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Corrected media type
       allowsEditing: true,
-      quality: 4,
+      aspect: [3, 3],
+      quality: 1,
     });
-    setLoading(true);
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[result.assets.length - 1].uri);
       const uris = result.assets.map((asset) => asset.uri);
-      setSelectedImageGroup([...selectedImageGroup, ...uris]);
+      setSelectedImage(uris[0]); // Set the first image as the primary selected image
+      setSelectedImageGroup((prev) => [...prev, ...uris]); // Correctly append images to the array
     }
-    setLoading(false);
+
+    setUploadLoading(false);
   };
 
-  const handleSaveClick = async () => {};
+  const handleSaveClick = async () => {
+    if (!selectedImage && selectedImageGroup.length === 0) return;
+
+    try {
+      setLoading(true);
+      let formData = new FormData();
+      selectedImageGroup.forEach((image, index) => {
+        formData.append("images", {
+          uri: image,
+          name: `image_${Date.now()}_${index}.jpg`,
+          type: "image/jpeg",
+        } as unknown as Blob);
+      });
+      const uploadResponse = await uploadImage(formData);
+      if (uploadResponse.success) {
+        const { imageUrls } = uploadResponse.data;
+        const updatingUser: User = {
+          ...user,
+          profilePics: imageUrls,
+        };
+        const userResponse = await updateMe(updatingUser);
+        if (userResponse.success) {
+          const { data } = userResponse;
+          updateUser(data);
+          Alert.alert("Profile pictures saved successfully");
+          if (user?.name) {
+            router.replace("/verify/kyc");
+          } else {
+            router.replace("/profile/create/detail");
+          }
+        }
+      }
+    } catch (error) {
+      console.log("profile picture save error: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const { profilePics } = user as User;
+    if (profilePics) {
+      setSelectedImage(profilePics[0]);
+      setSelectedImageGroup(profilePics);
+    }
+  }, []);
 
   return (
     <ModalContainer>
@@ -63,11 +133,12 @@ export default function Modal() {
           {selectedImage ? (
             <Avatar imgSource={selectedImage} size={avatarSize} />
           ) : (
-            <Avatar size={avatarSize * 0.75}>
+            <Avatar size={avatarSize * 1.5}>
               <FontAwesome name="user" size={iconSize} color="#EA4C7C" />
             </Avatar>
           )}
         </View>
+        {uploadLoading && <Spinner />}
         <View>
           <AvatarGroup avatars={selectedImageGroup} />
         </View>
@@ -94,7 +165,7 @@ export default function Modal() {
               iconPosition="right"
               loading={loading}
               onClick={handleSaveClick}
-              disabled={!selectedImage}
+              disabled={!selectedImage || loading}
             />
             <Button
               type="outline"

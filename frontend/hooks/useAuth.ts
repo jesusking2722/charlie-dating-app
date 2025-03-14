@@ -15,6 +15,9 @@ export function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        if (pathname.includes("signup") || pathname.includes("signin")) {
+          return;
+        }
         const token = await AsyncStorage.getItem("Authorization");
         if (!token) {
           router.push("/auth/signin");

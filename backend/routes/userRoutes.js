@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { fetchMe } = require("../controllers/userController");
+const { fetchUserInfo } = require("../controllers/userController");
 
-router.get("/me", fetchMe);
+router.get("/:id", fetchUserInfo);
 
 module.exports = router;

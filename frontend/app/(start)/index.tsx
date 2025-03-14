@@ -4,15 +4,16 @@ import * as Progress from "react-native-progress";
 import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import Logo from "@/components/common/Logo";
-import FooterContainer from "@/components/containers/FooterContainer";
 import StartContainer from "@/components/containers/StartContainer";
 import ScreenTransition from "@/components/animation/ScreenTransition";
 import { getRandomNumber } from "@/helper";
 import { logoTexts } from "@/constants/initialValues";
 import ThreeDotsLoader from "@/components/animation/ThreeDotsLoader";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchUserInfo } from "@/lib/scripts/user";
 import { useUser } from "@/components/providers/UserProvider";
+import { setAuthToken } from "@/lib/axiosInstance";
+import { fetchMe } from "@/lib/scripts/auth";
+import { jwtDecode } from "jwt-decode";
 
 const HeartImage = require("@/assets/images/heart.png");
 
@@ -36,18 +37,32 @@ export default function Start() {
       setProgress(elapsed >= 1 ? 1 : elapsed);
       if (elapsed >= 1) {
         clearInterval(interval);
-        const result = await checkAuthentication();
-        if (!result) {
+        const token = await checkAuthentication();
+        if (!token) {
           router.push("/auth/signin");
         } else {
-          const response = await fetchUserInfo();
+          const decoded = jwtDecode(token) as any;
+          const response = await fetchMe(decoded.id);
           if (response.success) {
             updateUser(response.data);
-            if (response.data.verified) {
-            } else {
-              // router.push("/verify/kyc");
-              router.push("/profile/create/question/main");
+            const { data } = response;
+            console.log(data);
+            if (!data.verified) {
+              if (data.name) {
+                // router.push("/verify/kyc");
+                router.push("/(tabs)");
+              } else {
+                if (!data.gender) {
+                  router.push("/profile/create/gender");
+                } else if (!data.name) {
+                  router.push("/profile/create/detail");
+                }
+              }
             }
+          } else {
+            console.log("Going to sign in now");
+            setAuthToken(null);
+            router.push("/auth/signin");
           }
         }
       }
@@ -58,17 +73,19 @@ export default function Start() {
 
   return (
     <StartContainer>
-      <ScreenTransition animationKey={0} direction="enter">
-        <View className="min-h-screen relative w-full flex flex-col items-center justify-center">
-          <Logo />
+      <ScreenTransition animationKey={0} direction="enter" pinked={true}>
+        <View className="flex-1 bg-pink-200">
+          <View className="flex-1 items-center justify-center">
+            <Logo />
+          </View>
           {/* Progress Bar Fixed to Bottom */}
-          <FooterContainer bottom={20}>
-            <View>
-              <Text className="font-sans text-[#EA4C7C] font-semibold">
-                {(progress * 100).toFixed(0)}%
-              </Text>
-            </View>
-            <View className="">
+          <View className="flex items-center justify-center">
+            <Text className="font-sans text-[#EA4C7C] font-semibold">
+              {(progress * 100).toFixed(0)}%
+            </Text>
+          </View>
+          <View className="w-full flex items-center justify-center">
+            <View className="relative">
               <Image source={HeartImage} style={styles.heartImage} />
               <Progress.Bar
                 color="#f8749b"
@@ -80,13 +97,13 @@ export default function Start() {
                 width={200}
               />
             </View>
-            <View className="flex flex-row items-center justify-center mt-4">
-              <Text className="font-sans text-xs text-[#EA4C7C]">
-                {randomText}
-              </Text>
-              <ThreeDotsLoader />
-            </View>
-          </FooterContainer>
+          </View>
+          <View className="flex flex-row items-center justify-center mt-4">
+            <Text className="font-sans text-xs text-[#EA4C7C]">
+              {randomText}
+            </Text>
+            <ThreeDotsLoader />
+          </View>
         </View>
       </ScreenTransition>
     </StartContainer>

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Pressable, View, Text } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import * as Progress from "react-native-progress";
+import Spinner from "./Spinner";
 
 interface ButtonProps {
   type: "default" | "outline" | "text" | "icon";
   label?: string;
   icon?: keyof typeof FontAwesome.glyphMap;
+  iconType?: "default" | "primary";
   iconPosition?: "left" | "right";
   disabled?: boolean;
   loading?: boolean;
@@ -18,6 +19,7 @@ export default function Button({
   label,
   icon,
   iconPosition,
+  iconType,
   disabled,
   loading,
   onClick,
@@ -25,20 +27,42 @@ export default function Button({
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   if (type === "icon") {
-    return (
-      <Pressable
-        className="p-2"
-        onTouchStart={() => setIsFocused(true)}
-        onTouchEnd={() => setIsFocused(false)}
-        onPress={onClick}
-      >
-        <FontAwesome
-          name={icon}
-          color={isFocused ? "#EA4C7C" : "black"}
-          size={20}
-        />
-      </Pressable>
-    );
+    if (iconType === "primary") {
+      return (
+        <Pressable
+          style={{
+            backgroundColor: isFocused ? "white" : "#EA4C7C",
+            borderColor: isFocused ? "#EA4C7C" : "",
+            borderWidth: 1,
+          }}
+          className="h-12 w-12 rounded-lg flex flex-col items-center justify-center"
+          onTouchStart={() => setIsFocused(true)}
+          onTouchEnd={() => setIsFocused(false)}
+          onPress={onClick}
+        >
+          <FontAwesome
+            name={icon}
+            color={isFocused ? "#EA4C7C" : "white"}
+            size={20}
+          />
+        </Pressable>
+      );
+    } else {
+      return (
+        <Pressable
+          className="p-2"
+          onTouchStart={() => setIsFocused(true)}
+          onTouchEnd={() => setIsFocused(false)}
+          onPress={onClick}
+        >
+          <FontAwesome
+            name={icon}
+            color={isFocused ? "#EA4C7C" : "black"}
+            size={20}
+          />
+        </Pressable>
+      );
+    }
   }
 
   return (
@@ -86,7 +110,7 @@ export default function Button({
               }
             />
           )}
-          {iconPosition === "left" && loading && <Progress.Circle animated />}
+          {iconPosition === "left" && loading && <Spinner />}
           <Text
             className={`text-sm font-sans transition-all ease-in-out duration-300 ${
               disabled || loading
@@ -119,7 +143,7 @@ export default function Button({
               }
             />
           )}
-          {iconPosition === "right" && loading && <Progress.Circle animated />}
+          {iconPosition === "right" && loading && <Spinner />}
         </Pressable>
       )}
     </>

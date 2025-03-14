@@ -1,7 +1,5 @@
 import ScreenTransition from "@/components/animation/ScreenTransition";
 import Button from "@/components/common/Button";
-import CreateProfileContainer from "@/components/containers/CreateProfileContainer";
-import FooterContainer from "@/components/containers/FooterContainer";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { fetchSessionDecision, startKycVerification } from "@/lib/scripts/kyc";
@@ -80,7 +78,7 @@ export default function Kyc() {
   return (
     <>
       {url ? (
-        <View className="p-4 flex-1">
+        <View className="p-4 flex-1 bg-white">
           <View className="mb-2">
             <Text className="font-sans text-lg font-semibold text-black">
               KYC VERIFICATION
@@ -99,21 +97,39 @@ export default function Kyc() {
         </View>
       ) : (
         <ScreenTransition animationKey={0} direction="enter">
-          <CreateProfileContainer
-            title="KYC VERIFICATION"
-            subtitle="Verify your identity"
-          >
-            <Image source={IdCard} style={styles.idImage} />
-          </CreateProfileContainer>
-          <FooterContainer bottom={10}>
-            <Button
-              type="default"
-              label="Verify"
-              icon="id-card"
-              iconPosition="right"
-              onClick={handleKycClick}
-            />
-          </FooterContainer>
+          <View className="w-full text-left">
+            <Text className="font-sans text-lg font-semibold text-black">
+              Edit Personal Details
+            </Text>
+            <Text className="font-sans text-sm text-gray-400 mt-1">
+              Please edit your personal details
+            </Text>
+          </View>
+          <View className="flex-1 items-center justify-center">
+            {url ? (
+              <WebView source={{ uri: url }} style={styles.webview} />
+            ) : (
+              <Image source={IdCard} style={styles.idImage} />
+            )}
+          </View>
+          {url ? (
+            <View className="flex flex-row items-center justify-center p-4 gap-4">
+              <Text className="text-center font-semibold text-pink-500">
+                {status}
+              </Text>
+              <Spinner />
+            </View>
+          ) : (
+            <View className="w-full flex items-center justify-center">
+              <Button
+                type="default"
+                label="Verify"
+                icon="id-card"
+                iconPosition="right"
+                onClick={handleKycClick}
+              />
+            </View>
+          )}
         </ScreenTransition>
       )}
     </>

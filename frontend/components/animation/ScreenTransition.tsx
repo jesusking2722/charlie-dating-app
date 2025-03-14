@@ -6,6 +6,7 @@ interface ScreenTransitionProps {
   children: React.ReactNode;
   direction: "enter" | "exit";
   className?: string;
+  pinked?: boolean;
 }
 
 const ScreenTransition = ({
@@ -13,6 +14,7 @@ const ScreenTransition = ({
   children,
   direction,
   className,
+  pinked,
 }: ScreenTransitionProps) => {
   const enterTransition = {
     from: {
@@ -40,14 +42,18 @@ const ScreenTransition = ({
 
   return (
     <MotiView
-      key={animationKey} // Re-render when animationKey changes
+      key={animationKey}
       from={transition.from}
       animate={transition.to}
       transition={{ type: "timing", duration: 2000 }}
       className={className}
-      style={{ width: "100%" }}
+      style={{ width: "100%", display: "flex", flex: 1 }}
     >
-      <View>{children}</View>
+      <View
+        className={`flex-1 px-8 py-4 ${pinked ? "bg-pink-200" : "bg-white"}`}
+      >
+        {children}
+      </View>
     </MotiView>
   );
 };
